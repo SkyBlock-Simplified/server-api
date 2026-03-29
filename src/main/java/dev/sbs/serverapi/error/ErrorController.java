@@ -81,13 +81,17 @@ public class ErrorController extends ResponseEntityExceptionHandler {
             int requestedVersion = Integer.parseInt(versionMatcher.group(1));
             String basePath = versionMatcher.group(2);
             ConcurrentSet<Integer> available = versionRegistryService.getVersionsForPath(basePath);
-            if (available != null)
-                throw new InvalidVersionException(requestedVersion, basePath, available);
+            if (available != null) {
+                InvalidVersionException versionEx = new InvalidVersionException(requestedVersion, basePath, available);
+                return handleExceptionInternal(versionEx, null, headers, versionEx.getStatus(), request);
+            }
         }
 
         ConcurrentSet<Integer> available = versionRegistryService.getVersionsForPath(requestUri);
-        if (available != null && !available.isEmpty())
-            throw new MissingVersionException(requestUri, available);
+        if (available != null && !available.isEmpty()) {
+            MissingVersionException versionEx = new MissingVersionException(requestUri, available);
+            return handleExceptionInternal(versionEx, null, headers, versionEx.getStatus(), request);
+        }
 
         return handleExceptionInternal(ex, null, headers, status, request);
     }
