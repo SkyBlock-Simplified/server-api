@@ -1,19 +1,15 @@
 package dev.sbs.serverapi;
 
 import dev.sbs.serverapi.config.ServerConfig;
-import dev.sbs.serverapi.security.SecurityHeaderInterceptor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Minimal Spring Boot application for testing the server-api framework.
  *
  * <p>Boots a lightweight server with API versioning, API key authentication, error
- * handling, and the test controllers in {@code dev.sbs.serverapi.controller}. Uses
- * {@link ServerConfig#builder()} defaults with SpringDoc disabled.</p>
+ * handling, and the test controllers in {@code dev.sbs.serverapi.controller}. Security
+ * headers and message converters are auto-configured by the framework.</p>
  *
  * <p>Run the {@link #main} method to start the server on port 8080, then exercise
  * the framework features manually:</p>
@@ -25,12 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * </ul>
  */
 @SpringBootApplication
-public class TestServer implements WebMvcConfigurer {
-
-    @Override
-    public void addInterceptors(@NotNull InterceptorRegistry registry) {
-        registry.addInterceptor(new SecurityHeaderInterceptor());
-    }
+public class TestServer {
 
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(TestServer.class);

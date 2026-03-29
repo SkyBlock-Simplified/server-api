@@ -113,7 +113,14 @@ dependencies {
 
 ```java
 @SpringBootApplication(scanBasePackages = { "com.example.myapp", "dev.sbs.serverapi" })
-public class MyApplication implements WebMvcConfigurer {
+public class MyApplication {
+
+    // Optional: provide a custom Gson instance for the framework's message converters.
+    // If omitted, the SimplifiedApi.getGson() is used.
+    @Bean
+    public Gson gson() {
+        return myCustomGson;
+    }
 
     public static void main(String[] args) {
         ServerConfig config = ServerConfig.builder()
@@ -172,6 +179,13 @@ connection limits and timeouts, response compression, HTTP/2, multipart
 uploads, graceful shutdown, forward headers strategy, logging level, API key
 auth toggle, and SpringDoc toggle.
 
+`ServerWebConfig` is a framework-level `WebMvcConfigurer` that auto-registers
+the `SecurityHeaderInterceptor` and configures HTTP message converters.
+`StringHttpMessageConverter` is registered first (so `text/html` error pages
+serialize correctly), followed by `GsonHttpMessageConverter` for JSON. If a
+consumer defines a `Gson` `@Bean`, it is used automatically; otherwise the
+`SimplifiedApi.getGson()` instance is used.
+
 ### API Versioning
 
 URL-path-based versioning via the `@ApiVersion` annotation:
@@ -202,7 +216,7 @@ Header-based API key authentication via the `@ApiKeyProtected` annotation:
 | `ApiKeyAuthenticationInterceptor` | `HandlerInterceptor` enforcing auth, rate limits, and permissions |
 | `ApiKeyService` | Key storage, validation, rate limiting, and permission resolution |
 | `ApiKeyRoleHierarchy` | Expands assigned roles into the full reachable set via the hierarchy |
-| `SecurityHeaderInterceptor` | Sets `X-Content-Type-Options: nosniff` on every response |
+| `SecurityHeaderInterceptor` | Sets `X-Content-Type-Options: nosniff` on every response (auto-registered) |
 | `ApiKeyConfig` | `@ConditionalOnProperty(name = "api.key.authentication.enabled", havingValue = "true")` |
 
 > [!NOTE]
@@ -260,8 +274,10 @@ ServerException (HttpStatus + message)
 server-api/
 ├── src/main/java/dev/sbs/serverapi/
 │   ├── config/
-│   │   └── ServerConfig.java          # Immutable server config with Builder,
-│   │                                  # MemorySize, ShutdownMode, ForwardHeadersStrategy
+│   │   ├── ServerConfig.java          # Immutable server config with Builder,
+│   │   │                              # MemorySize, ShutdownMode, ForwardHeadersStrategy
+│   │   └── ServerWebConfig.java       # Auto-registers SecurityHeaderInterceptor
+│   │                                  # and Gson message converters
 │   ├── error/
 │   │   ├── ErrorController.java       # Global @RestControllerAdvice with content negotiation
 │   │   └── ErrorPageRenderer.java     # Cloudflare-style HTML error page renderer

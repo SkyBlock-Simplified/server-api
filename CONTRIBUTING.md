@@ -214,8 +214,9 @@ A brief overview to help you find your way around the codebase:
 ```
 src/main/java/dev/sbs/serverapi/     # Framework library
 ├── config/
-│   └── ServerConfig.java              # Immutable config with Builder, MemorySize,
-│                                      # ShutdownMode, ForwardHeadersStrategy
+│   ├── ServerConfig.java              # Immutable config with Builder, MemorySize,
+│   │                                  # ShutdownMode, ForwardHeadersStrategy
+│   └── ServerWebConfig.java           # Security header interceptor + Gson message converters
 ├── error/
 │   ├── ErrorController.java           # Global @RestControllerAdvice with content negotiation
 │   └── ErrorPageRenderer.java         # Cloudflare-style HTML renderer with Placeholder enum

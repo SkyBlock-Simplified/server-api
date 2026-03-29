@@ -24,6 +24,7 @@ See the root [`CLAUDE.md`](../CLAUDE.md) for multi-module build commands, enviro
 
 **`config/`** - Server-wide configuration:
 - `ServerConfig` - Immutable configuration class following the `ClassBuilder` pattern. Inner `Builder` with `@BuildFlag` validation. Static factories: `builder()` for full control, `optimized()` for a production-tuned preset. `toProperties()` converts fields to a `ConcurrentMap<String, Object>` for `SpringApplication.setDefaultProperties()`. Includes `springdocEnabled` toggle controlling SpringDoc/Scalar properties.
+- `ServerWebConfig` - Framework-level `WebMvcConfigurer` that auto-registers `SecurityHeaderInterceptor` as a `MappedInterceptor` and configures HTTP message converters (`StringHttpMessageConverter` first for HTML error pages, then `GsonHttpMessageConverter` for JSON). Uses a consumer-provided `Gson` `@Bean` if available, otherwise falls back to `SimplifiedApi.getGson()`.
 
 **`error/`** - Global error handling and HTML error page rendering:
 - `ErrorController` - Global `@RestControllerAdvice` extending `ResponseEntityExceptionHandler`. Performs content negotiation via the `Accept` header: browsers (`text/html`) receive Cloudflare-style HTML error pages, while API clients receive JSON. Overridable `buildErrorBody()` method allows consumers to customize JSON error response format. Overrides `handleNoResourceFoundException` to detect version violations on 404s.
@@ -33,7 +34,7 @@ See the root [`CLAUDE.md`](../CLAUDE.md) for multi-module build commands, enviro
 - `ServerException` - Non-final root exception extending `RuntimeException` with an embedded `HttpStatus` field. Five constructors with `HttpStatus` as first parameter.
 
 **`security/`** - API key authentication, authorization, and rate limiting:
-- `SecurityHeaderInterceptor` - Sets `X-Content-Type-Options: nosniff` on every response.
+- `SecurityHeaderInterceptor` - Sets `X-Content-Type-Options: nosniff` on every response. Auto-registered by `ServerWebConfig`.
 - `ApiKeyRole` - Enum defining hierarchical access roles. Precomputes an immutable hierarchy map.
 - `ApiKey` - API key with roles, rate limit config, and sliding window counter state.
 - `ApiKeyProtected` - TYPE and METHOD level annotation for API key requirements.
@@ -70,7 +71,16 @@ Consumers must scan the `dev.sbs.serverapi` package for Spring to pick up config
 
 ```java
 @SpringBootApplication(scanBasePackages = { "com.example.myapp", "dev.sbs.serverapi" })
-public class MyApplication implements WebMvcConfigurer { }
+public class MyApplication { }
+```
+
+To customize the `Gson` instance used by the framework's message converters, define a `@Bean`:
+
+```java
+@Bean
+public Gson gson() {
+    return myCustomGson;
+}
 ```
 
 ### Configuration
