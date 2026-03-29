@@ -1,28 +1,33 @@
 package dev.sbs.serverapi.version;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.handler.MappedInterceptor;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
- * Registers the {@link ApiVersionHandlerMapping} as a high-priority
- * bean, the {@link VersionRegistryService} for precomputed version index lookups,
+ * Replaces the default {@link RequestMappingHandlerMapping} with
+ * {@link ApiVersionHandlerMapping} via {@link WebMvcRegistrations}, registers
+ * the {@link VersionRegistryService} for precomputed version index lookups,
  * and the {@link ApiVersionInterceptor} for version validation on resolved handlers.
  */
 @Configuration
-public class ApiVersionConfig implements WebMvcConfigurer {
+public class ApiVersionConfig {
 
     @Bean
-    public @NotNull ApiVersionHandlerMapping apiVersionRequestMappingHandlerMapping() {
-        ApiVersionHandlerMapping mapping = new ApiVersionHandlerMapping();
-        mapping.setOrder(0);
-        return mapping;
+    public @NotNull WebMvcRegistrations webMvcRegistrations() {
+        return new WebMvcRegistrations() {
+            @Override
+            public @NotNull RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
+                return new ApiVersionHandlerMapping();
+            }
+        };
     }
 
     @Bean
-    public @NotNull VersionRegistryService versionRegistryService(@NotNull ApiVersionHandlerMapping handlerMapping) {
+    public @NotNull VersionRegistryService versionRegistryService(@NotNull RequestMappingHandlerMapping handlerMapping) {
         return new VersionRegistryService(handlerMapping);
     }
 
@@ -31,9 +36,9 @@ public class ApiVersionConfig implements WebMvcConfigurer {
         return new ApiVersionInterceptor(versionRegistryService);
     }
 
-    @Override
-    public void addInterceptors(@NotNull InterceptorRegistry registry) {
-        registry.addInterceptor(apiVersionInterceptor(versionRegistryService(apiVersionRequestMappingHandlerMapping()))).addPathPatterns("/**");
+    @Bean
+    public @NotNull MappedInterceptor apiVersionMappedInterceptor(@NotNull ApiVersionInterceptor apiVersionInterceptor) {
+        return new MappedInterceptor(new String[]{"/**"}, apiVersionInterceptor);
     }
 
 }
