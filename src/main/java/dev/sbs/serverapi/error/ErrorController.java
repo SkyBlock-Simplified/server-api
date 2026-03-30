@@ -1,5 +1,6 @@
 package dev.sbs.serverapi.error;
 
+import dev.sbs.api.client.exception.ApiDecodeException;
 import dev.sbs.api.client.exception.ApiException;
 import dev.sbs.api.collection.concurrent.ConcurrentSet;
 import dev.sbs.serverapi.exception.ServerException;
@@ -8,6 +9,7 @@ import dev.sbs.serverapi.version.exception.InvalidVersionException;
 import dev.sbs.serverapi.version.exception.MissingVersionException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +35,7 @@ import java.util.regex.Pattern;
  * {@code text/html} get a Cloudflare-style HTML error page rendered by
  * {@link ErrorPageRenderer}, while API clients get JSON error responses.</p>
  */
+@Log4j2
 @RequiredArgsConstructor
 @RestControllerAdvice
 public final class ErrorController extends ResponseEntityExceptionHandler {
@@ -104,6 +107,19 @@ public final class ErrorController extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(status).body(buildErrorBody(status, ex.getMessage(), request));
     }
 
+    @ExceptionHandler(ApiDecodeException.class)
+    public @NotNull ResponseEntity<?> handleApiDecodeException(
+        @NotNull ApiDecodeException ex,
+        @NotNull HttpServletRequest request) {
+        int code = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        String reason = ex.getResponse().getReason();
+
+        if (acceptsHtml(request))
+            return htmlResponse(code, HttpStatus.valueOf(code).getReasonPhrase(), reason, request, ErrorSource.SERVER);
+
+        return ResponseEntity.status(code).body(buildErrorBody(code, reason, request));
+    }
+
     @ExceptionHandler(ApiException.class)
     public @NotNull ResponseEntity<?> handleApiException(
             @NotNull ApiException ex,
@@ -119,8 +135,10 @@ public final class ErrorController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public @NotNull ResponseEntity<?> handleAll(
-            @NotNull Exception ignore,
+            @NotNull Exception ex,
             @NotNull HttpServletRequest request) {
+        log.error("Unhandled exception on {}", route(request), ex);
+
         if (acceptsHtml(request))
             return htmlResponse(500, "Internal Server Error", "An unexpected error occurred", request);
 
