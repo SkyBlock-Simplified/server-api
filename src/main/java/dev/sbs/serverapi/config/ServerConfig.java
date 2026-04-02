@@ -84,7 +84,7 @@ public final class ServerConfig {
             .withMinSpareThreads(50)
             .withVirtualThreadsEnabled(true)
             .withAcceptCount(200)
-            .withActuatorEnabled(true)
+            .isActuatorEnabled(true)
             .withMaxConnections(10000)
             .withConnectionTimeout(10)
             .withCompressionEnabled(true)
@@ -381,22 +381,52 @@ public final class ServerConfig {
             return this;
         }
 
+        /** Sets API key authentication to enable. */
+        public @NotNull Builder isApiKeyAuthEnabled() {
+            return this.isApiKeyAuthEnabled(true);
+        }
+
         /** Sets whether API key authentication is enabled. */
-        public @NotNull Builder withApiKeyAuthEnabled(boolean apiKeyAuthEnabled) {
+        public @NotNull Builder isApiKeyAuthEnabled(boolean apiKeyAuthEnabled) {
             this.apiKeyAuthEnabled = apiKeyAuthEnabled;
             return this;
         }
 
+        /** Sets API key authentication to disable. */
+        public @NotNull Builder isApiKeyAuthDisabled() {
+            return this.isApiKeyAuthEnabled(false);
+        }
+
+        /** Sets SpringDoc OpenAPI documentation to enable. */
+        public @NotNull Builder isSpringdocEnabled() {
+            return this.isSpringdocEnabled(true);
+        }
+
         /** Sets whether SpringDoc OpenAPI documentation is enabled. */
-        public @NotNull Builder withSpringdocEnabled(boolean springdocEnabled) {
+        public @NotNull Builder isSpringdocEnabled(boolean springdocEnabled) {
             this.springdocEnabled = springdocEnabled;
             return this;
         }
 
+        /** Sets SpringDoc OpenAPI documentation to disable. */
+        public @NotNull Builder isSpringdocDisabled() {
+            return this.isSpringdocEnabled(true);
+        }
+
+        /** Sets Spring Boot Actuator endpoints to enable. */
+        public @NotNull Builder isActuatorEnabled() {
+            return this.isActuatorEnabled(true);
+        }
+
         /** Sets whether Spring Boot Actuator endpoints are enabled. */
-        public @NotNull Builder withActuatorEnabled(boolean actuatorEnabled) {
+        public @NotNull Builder isActuatorEnabled(boolean actuatorEnabled) {
             this.actuatorEnabled = actuatorEnabled;
             return this;
+        }
+
+        /** Sets Spring Boot Actuator endpoints to disable. */
+        public @NotNull Builder isActuatorDisabled() {
+            return this.isActuatorEnabled(false);
         }
 
         /** Sets the actuator endpoints exposed over HTTP. */
