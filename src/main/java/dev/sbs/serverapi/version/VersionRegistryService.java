@@ -72,4 +72,16 @@ public class VersionRegistryService {
         return versionedPaths.containsKey(basePath);
     }
 
+    /**
+     * Returns all unique version numbers across all versioned paths.
+     *
+     * @return a set of all discovered version numbers, empty if no versioned handlers exist
+     */
+    public @NotNull ConcurrentSet<Integer> getAllVersions() {
+        return versionedPaths.values()
+            .stream()
+            .flatMap(ConcurrentSet::stream)
+            .collect(Concurrent.toSet());
+    }
+
 }
