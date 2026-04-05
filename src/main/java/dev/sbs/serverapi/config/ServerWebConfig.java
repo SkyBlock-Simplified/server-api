@@ -5,6 +5,7 @@ import dev.sbs.api.SimplifiedApi;
 import dev.sbs.serverapi.security.SecurityHeaderInterceptor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
@@ -35,6 +36,19 @@ public class ServerWebConfig implements WebMvcConfigurer {
     @Bean
     public @NotNull MappedInterceptor securityHeaderMappedInterceptor() {
         return new MappedInterceptor(new String[]{"/**"}, new SecurityHeaderInterceptor());
+    }
+
+    /**
+     * Provides a no-op {@link ErrorController} bean to prevent Spring Boot's
+     * {@code BasicErrorController} from registering the default {@code /error} endpoint.
+     * The framework's {@link dev.sbs.serverapi.error.ErrorController RestControllerAdvice}
+     * handles all error responses.
+     *
+     * @return a no-op error controller
+     */
+    @Bean
+    public @NotNull ErrorController noOpErrorController() {
+        return new ErrorController() {};
     }
 
     /**
