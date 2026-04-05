@@ -27,7 +27,11 @@ dependencies {
     testCompileOnly(libs.lombok)
     testAnnotationProcessor(libs.lombok)
 
+    // SpringDoc OpenAPI (compile-only for optional documentation enrichment)
+    compileOnly(libs.springdoc.openapi.common)
+
     // Tests
+    testImplementation(libs.springdoc.openapi.scalar)
     testImplementation(libs.hamcrest)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
