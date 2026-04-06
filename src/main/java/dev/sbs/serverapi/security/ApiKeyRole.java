@@ -1,9 +1,9 @@
 package dev.sbs.serverapi.security;
 
-import dev.sbs.api.collection.concurrent.Concurrent;
-import dev.sbs.api.collection.concurrent.ConcurrentList;
-import dev.sbs.api.collection.concurrent.ConcurrentMap;
-import dev.sbs.api.collection.concurrent.ConcurrentSet;
+import dev.simplified.collection.Concurrent;
+import dev.simplified.collection.ConcurrentList;
+import dev.simplified.collection.ConcurrentMap;
+import dev.simplified.collection.ConcurrentSet;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,11 +1,10 @@
 package dev.sbs.serverapi.config;
 
-import dev.sbs.api.collection.concurrent.Concurrent;
-import dev.sbs.api.collection.concurrent.ConcurrentList;
-import dev.sbs.api.collection.concurrent.ConcurrentMap;
-import dev.sbs.api.reflection.Reflection;
-import dev.sbs.api.util.builder.BuildFlag;
-import dev.sbs.api.util.builder.ClassBuilder;
+import dev.simplified.collection.Concurrent;
+import dev.simplified.collection.ConcurrentList;
+import dev.simplified.collection.ConcurrentMap;
+import dev.simplified.reflection.Reflection;
+import dev.simplified.reflection.builder.BuildFlag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -172,7 +171,7 @@ public final class ServerConfig {
      * @see ServerConfig#builder()
      * @see ServerConfig#optimized()
      */
-    public static class Builder implements ClassBuilder<ServerConfig> {
+    public static class Builder {
 
         private int port = 8080;
         @BuildFlag(nonNull = true)
@@ -458,7 +457,6 @@ public final class ServerConfig {
          *
          * @return a fully constructed server configuration
          */
-        @Override
         public @NotNull ServerConfig build() {
             Reflection.validateFlags(this);
 

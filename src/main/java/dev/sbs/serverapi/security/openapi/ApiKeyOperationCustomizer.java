@@ -1,8 +1,8 @@
 package dev.sbs.serverapi.security.openapi;
 
-import dev.sbs.api.collection.concurrent.ConcurrentSet;
 import dev.sbs.serverapi.security.ApiKeyProtected;
 import dev.sbs.serverapi.security.ApiKeyRole;
+import dev.simplified.collection.ConcurrentSet;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;

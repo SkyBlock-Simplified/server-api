@@ -1,6 +1,6 @@
 package dev.sbs.serverapi.security;
 
-import dev.sbs.api.collection.concurrent.ConcurrentSet;
+import dev.simplified.collection.ConcurrentSet;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

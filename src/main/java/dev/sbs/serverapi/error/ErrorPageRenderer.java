@@ -1,7 +1,7 @@
 package dev.sbs.serverapi.error;
 
-import dev.sbs.api.util.StringUtil;
-import dev.sbs.api.util.SystemUtil;
+import dev.simplified.util.StringUtil;
+import dev.simplified.util.SystemUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

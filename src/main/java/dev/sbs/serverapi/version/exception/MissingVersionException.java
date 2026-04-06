@@ -1,6 +1,6 @@
 package dev.sbs.serverapi.version.exception;
 
-import dev.sbs.api.collection.concurrent.ConcurrentSet;
+import dev.simplified.collection.ConcurrentSet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 

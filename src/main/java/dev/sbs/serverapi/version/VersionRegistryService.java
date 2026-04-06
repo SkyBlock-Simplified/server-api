@@ -1,8 +1,8 @@
 package dev.sbs.serverapi.version;
 
-import dev.sbs.api.collection.concurrent.Concurrent;
-import dev.sbs.api.collection.concurrent.ConcurrentMap;
-import dev.sbs.api.collection.concurrent.ConcurrentSet;
+import dev.simplified.collection.Concurrent;
+import dev.simplified.collection.ConcurrentMap;
+import dev.simplified.collection.ConcurrentSet;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

@@ -1,7 +1,7 @@
 package dev.sbs.serverapi.version;
 
-import dev.sbs.api.collection.concurrent.ConcurrentSet;
 import dev.sbs.serverapi.version.exception.InvalidVersionException;
+import dev.simplified.collection.ConcurrentSet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

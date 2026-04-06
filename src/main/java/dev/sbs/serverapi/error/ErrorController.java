@@ -1,12 +1,12 @@
 package dev.sbs.serverapi.error;
 
-import dev.sbs.api.client.exception.ApiDecodeException;
-import dev.sbs.api.client.exception.ApiException;
-import dev.sbs.api.collection.concurrent.ConcurrentSet;
 import dev.sbs.serverapi.exception.ServerException;
 import dev.sbs.serverapi.version.VersionRegistryService;
 import dev.sbs.serverapi.version.exception.InvalidVersionException;
 import dev.sbs.serverapi.version.exception.MissingVersionException;
+import dev.simplified.client.exception.ApiDecodeException;
+import dev.simplified.client.exception.ApiException;
+import dev.simplified.collection.ConcurrentSet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

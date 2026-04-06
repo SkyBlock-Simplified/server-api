@@ -1,7 +1,7 @@
 package dev.sbs.serverapi.version.openapi;
 
-import dev.sbs.api.collection.concurrent.ConcurrentSet;
 import dev.sbs.serverapi.version.VersionRegistryService;
+import dev.simplified.collection.ConcurrentSet;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springdoc.core.models.GroupedOpenApi;
