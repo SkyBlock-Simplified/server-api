@@ -159,7 +159,7 @@ public final class ServerConfig {
             props.put("management.endpoints.web.exposure.include", "");
         }
 
-        return props.toUnmodifiableMap();
+        return props.toUnmodifiable();
     }
 
     /**

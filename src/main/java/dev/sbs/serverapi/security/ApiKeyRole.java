@@ -37,7 +37,7 @@ public enum ApiKeyRole {
         for (int i = 0; i < values.size(); i++)
             hierarchy.put(values.get(i), Concurrent.newSet(values.subList(i, values.size())));
 
-        ApiKeyRole.hierarchy = hierarchy.toUnmodifiableMap();
+        ApiKeyRole.hierarchy = hierarchy.toUnmodifiable();
     }
 
 }
