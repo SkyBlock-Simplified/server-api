@@ -40,8 +40,8 @@ dependencies {
     testRuntimeOnly(libs.spring.boot.properties.migrator)
 
     // Exported dependencies (available to consumers)
-    api("com.github.simplified-dev:gson-extras") { version { strictly("37a2c2f") } }
-    api("com.github.simplified-dev:client") { version { strictly("679666d") } }
+    api("com.github.simplified-dev:gson-extras") { version { strictly("2ba8143") } }
+    api("com.github.simplified-dev:client") { version { strictly("3d87a03") } }
     api(libs.gson)
     api(libs.spring.boot.actuator)
     api(libs.spring.boot.web)
