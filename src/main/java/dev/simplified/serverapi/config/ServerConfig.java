@@ -1,75 +1,98 @@
 package dev.simplified.serverapi.config;
 
+import dev.simplified.annotations.AccessLevel;
+import dev.simplified.annotations.BuildFlag;
+import dev.simplified.annotations.ClassBuilder;
+import dev.simplified.annotations.Getter;
+import dev.simplified.annotations.Negate;
+import dev.simplified.annotations.RequiredArgsConstructor;
+import dev.simplified.annotations.SetterNames;
 import dev.simplified.collection.Concurrent;
 import dev.simplified.collection.ConcurrentList;
 import dev.simplified.collection.ConcurrentMap;
-import dev.simplified.reflection.Reflection;
-import dev.simplified.reflection.builder.BuildFlag;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.logging.LogLevel;
 
 /**
- * Immutable configuration class for the Spring Boot server, constructed via its nested {@link Builder}.
+ * Immutable configuration class for the Spring Boot server, constructed via its generated
+ * {@code Builder}.
  *
  * <p>Holds server tuning parameters, compression settings, thread pool sizing, and
  * application metadata. Each field maps to a Spring Boot property key and is emitted
  * by {@link #toProperties()} as a {@link ConcurrentMap} suitable for
  * {@link SpringApplication#setDefaultProperties}.</p>
  *
- * <p>Use {@link #builder()} for full control over every setting, or {@link #optimized()}
- * for a production-tuned preset targeting a high-core-count server behind a reverse proxy.</p>
- *
- * @see Builder
+ * <p>Use {@code builder()} for full control over every setting, or {@link #optimized()}
+ * for a production-tuned preset targeting a high-core-count server behind a reverse proxy.
+ * Every field's declared value below is the builder's default for that setting.</p>
  */
 @Getter
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@ClassBuilder(
+    constructorAccess = AccessLevel.PRIVATE,
+    setters = @SetterNames(set = "with{}", flag = "is{}")
+)
 public final class ServerConfig {
 
-    private final int port;
-    private final @NotNull String address;
-    private final @NotNull String contextPath;
-    private final int maxThreads;
-    private final int minSpareThreads;
-    private final boolean virtualThreadsEnabled;
-    private final int acceptCount;
-    private final int maxConnections;
-    private final int connectionTimeout;
-    private final int keepAliveTimeout;
-    private final int maxKeepAliveRequests;
-    private final boolean compressionEnabled;
-    private final @NotNull MemorySize compressionMinSize;
-    private final @NotNull ConcurrentList<String> compressionMimeTypes;
-    private final boolean http2Enabled;
-    private final @NotNull MemorySize maxRequestHeaderSize;
-    private final @NotNull MemorySize maxFormPostSize;
-    private final boolean multipartEnabled;
-    private final @NotNull MemorySize multipartMaxFileSize;
-    private final @NotNull MemorySize multipartMaxRequestSize;
-    private final @NotNull ShutdownMode shutdownMode;
-    private final int shutdownTimeout;
-    private final @NotNull ForwardHeadersStrategy forwardHeadersStrategy;
-    private final @NotNull String applicationName;
-    private final @NotNull LogLevel rootLogLevel;
-    private final boolean apiKeyAuthEnabled;
-    private final boolean springdocEnabled;
-    private final boolean actuatorEnabled;
-    private final @NotNull ConcurrentList<String> actuatorExposedEndpoints;
-    private final @NotNull String actuatorBasePath;
-    private final int managementPort;
-    private final @NotNull HealthDetailsVisibility healthShowDetails;
-
-    /**
-     * Returns a new {@link Builder} for constructing a {@link ServerConfig} instance.
-     *
-     * @return a new builder with default values
-     */
-    public static @NotNull Builder builder() {
-        return new Builder();
-    }
+    private final int port = 8080;
+    @BuildFlag(nonNull = true)
+    private final @NotNull String address = "0.0.0.0";
+    @BuildFlag(nonNull = true)
+    private final @NotNull String contextPath = "/";
+    private final int maxThreads = 200;
+    private final int minSpareThreads = 10;
+    private final boolean virtualThreadsEnabled = false;
+    private final int acceptCount = 100;
+    private final int maxConnections = 8192;
+    private final int connectionTimeout = 20;
+    private final int keepAliveTimeout = 60;
+    private final int maxKeepAliveRequests = 100;
+    private final boolean compressionEnabled = false;
+    @BuildFlag(nonNull = true)
+    private final @NotNull MemorySize compressionMinSize = MemorySize.bytes(2048);
+    @BuildFlag(nonNull = true)
+    private final @NotNull ConcurrentList<String> compressionMimeTypes = Concurrent.newList(
+        "text/html",
+        "text/xml",
+        "text/plain",
+        "text/css",
+        "text/javascript",
+        "application/javascript",
+        "application/json",
+        "application/xml"
+    );
+    private final boolean http2Enabled = false;
+    @BuildFlag(nonNull = true)
+    private final @NotNull MemorySize maxRequestHeaderSize = MemorySize.kilobytes(8);
+    @BuildFlag(nonNull = true)
+    private final @NotNull MemorySize maxFormPostSize = MemorySize.megabytes(2);
+    private final boolean multipartEnabled = true;
+    @BuildFlag(nonNull = true)
+    private final @NotNull MemorySize multipartMaxFileSize = MemorySize.megabytes(1);
+    @BuildFlag(nonNull = true)
+    private final @NotNull MemorySize multipartMaxRequestSize = MemorySize.megabytes(10);
+    @BuildFlag(nonNull = true)
+    private final @NotNull ShutdownMode shutdownMode = ShutdownMode.IMMEDIATE;
+    private final int shutdownTimeout = 30;
+    @BuildFlag(nonNull = true)
+    private final @NotNull ForwardHeadersStrategy forwardHeadersStrategy = ForwardHeadersStrategy.NONE;
+    @BuildFlag(nonNull = true)
+    private final @NotNull String applicationName = "simplified-server";
+    @BuildFlag(nonNull = true)
+    private final @NotNull LogLevel rootLogLevel = LogLevel.INFO;
+    @Negate("apiKeyAuthDisabled")
+    private final boolean apiKeyAuthEnabled = true;
+    @Negate("springdocDisabled")
+    private final boolean springdocEnabled = true;
+    @Negate("actuatorDisabled")
+    private final boolean actuatorEnabled = false;
+    @BuildFlag(nonNull = true)
+    private final @NotNull ConcurrentList<String> actuatorExposedEndpoints = Concurrent.newList("health", "info");
+    @BuildFlag(nonNull = true)
+    private final @NotNull String actuatorBasePath = "/actuator";
+    private final int managementPort = -1;
+    @BuildFlag(nonNull = true)
+    private final @NotNull HealthDetailsVisibility healthShowDetails = HealthDetailsVisibility.NEVER;
 
     /**
      * Builds a production-tuned {@link ServerConfig} targeting a high-core-count server
@@ -83,7 +106,7 @@ public final class ServerConfig {
             .withMinSpareThreads(50)
             .withVirtualThreadsEnabled(true)
             .withAcceptCount(200)
-            .isActuatorEnabled(true)
+            .withActuatorEnabled(true)
             .withMaxConnections(10000)
             .withConnectionTimeout(10)
             .withCompressionEnabled(true)
@@ -160,418 +183,6 @@ public final class ServerConfig {
         }
 
         return props.toUnmodifiable();
-    }
-
-    /**
-     * Fluent builder for constructing {@link ServerConfig} instances.
-     *
-     * <p>All fields carry sensible defaults matching Spring Boot conventions.
-     * Call {@link #build()} to validate and produce an immutable configuration.</p>
-     *
-     * @see ServerConfig#builder()
-     * @see ServerConfig#optimized()
-     */
-    public static class Builder {
-
-        private int port = 8080;
-        @BuildFlag(nonNull = true)
-        private String address = "0.0.0.0";
-        @BuildFlag(nonNull = true)
-        private String contextPath = "/";
-        private int maxThreads = 200;
-        private int minSpareThreads = 10;
-        private boolean virtualThreadsEnabled = false;
-        private int acceptCount = 100;
-        private int maxConnections = 8192;
-        private int connectionTimeout = 20;
-        private int keepAliveTimeout = 60;
-        private int maxKeepAliveRequests = 100;
-        private boolean compressionEnabled = false;
-        @BuildFlag(nonNull = true)
-        private MemorySize compressionMinSize = MemorySize.bytes(2048);
-        @BuildFlag(nonNull = true)
-        private ConcurrentList<String> compressionMimeTypes = Concurrent.newList(
-            "text/html",
-            "text/xml",
-            "text/plain",
-            "text/css",
-            "text/javascript",
-            "application/javascript",
-            "application/json",
-            "application/xml"
-        );
-        private boolean http2Enabled = false;
-        @BuildFlag(nonNull = true)
-        private MemorySize maxRequestHeaderSize = MemorySize.kilobytes(8);
-        @BuildFlag(nonNull = true)
-        private MemorySize maxFormPostSize = MemorySize.megabytes(2);
-        private boolean multipartEnabled = true;
-        @BuildFlag(nonNull = true)
-        private MemorySize multipartMaxFileSize = MemorySize.megabytes(1);
-        @BuildFlag(nonNull = true)
-        private MemorySize multipartMaxRequestSize = MemorySize.megabytes(10);
-        @BuildFlag(nonNull = true)
-        private ShutdownMode shutdownMode = ShutdownMode.IMMEDIATE;
-        private int shutdownTimeout = 30;
-        @BuildFlag(nonNull = true)
-        private ForwardHeadersStrategy forwardHeadersStrategy = ForwardHeadersStrategy.NONE;
-        @BuildFlag(nonNull = true)
-        private String applicationName = "simplified-server";
-        @BuildFlag(nonNull = true)
-        private LogLevel rootLogLevel = LogLevel.INFO;
-        private boolean apiKeyAuthEnabled = true;
-        private boolean springdocEnabled = true;
-        private boolean actuatorEnabled = false;
-        @BuildFlag(nonNull = true)
-        private ConcurrentList<String> actuatorExposedEndpoints = Concurrent.newList("health", "info");
-        @BuildFlag(nonNull = true)
-        private String actuatorBasePath = "/actuator";
-        private int managementPort = -1;
-        @BuildFlag(nonNull = true)
-        private HealthDetailsVisibility healthShowDetails = HealthDetailsVisibility.NEVER;
-
-        /**
-         * Sets the server port.
-         */
-        public @NotNull Builder withPort(int port) {
-            this.port = port;
-            return this;
-        }
-
-        /**
-         * Sets the server bind address.
-         */
-        public @NotNull Builder withAddress(@NotNull String address) {
-            this.address = address;
-            return this;
-        }
-
-        /**
-         * Sets the servlet context path.
-         */
-        public @NotNull Builder withContextPath(@NotNull String contextPath) {
-            this.contextPath = contextPath;
-            return this;
-        }
-
-        /**
-         * Sets the maximum number of Tomcat worker threads.
-         */
-        public @NotNull Builder withMaxThreads(int maxThreads) {
-            this.maxThreads = maxThreads;
-            return this;
-        }
-
-        /**
-         * Sets the minimum number of spare Tomcat worker threads.
-         */
-        public @NotNull Builder withMinSpareThreads(int minSpareThreads) {
-            this.minSpareThreads = minSpareThreads;
-            return this;
-        }
-
-        /**
-         * Sets whether virtual threads are enabled (Java 21+).
-         */
-        public @NotNull Builder withVirtualThreadsEnabled(boolean virtualThreadsEnabled) {
-            this.virtualThreadsEnabled = virtualThreadsEnabled;
-            return this;
-        }
-
-        /**
-         * Sets the Tomcat accept queue length.
-         */
-        public @NotNull Builder withAcceptCount(int acceptCount) {
-            this.acceptCount = acceptCount;
-            return this;
-        }
-
-        /**
-         * Sets the maximum number of concurrent Tomcat connections.
-         */
-        public @NotNull Builder withMaxConnections(int maxConnections) {
-            this.maxConnections = maxConnections;
-            return this;
-        }
-
-        /**
-         * Sets the connection timeout in seconds.
-         */
-        public @NotNull Builder withConnectionTimeout(int seconds) {
-            this.connectionTimeout = seconds;
-            return this;
-        }
-
-        /**
-         * Sets the keep-alive timeout in seconds.
-         */
-        public @NotNull Builder withKeepAliveTimeout(int seconds) {
-            this.keepAliveTimeout = seconds;
-            return this;
-        }
-
-        /**
-         * Sets the maximum number of keep-alive requests per connection.
-         */
-        public @NotNull Builder withMaxKeepAliveRequests(int maxKeepAliveRequests) {
-            this.maxKeepAliveRequests = maxKeepAliveRequests;
-            return this;
-        }
-
-        /**
-         * Sets whether response compression is enabled.
-         */
-        public @NotNull Builder withCompressionEnabled(boolean compressionEnabled) {
-            this.compressionEnabled = compressionEnabled;
-            return this;
-        }
-
-        /**
-         * Sets the minimum response size to trigger compression.
-         */
-        public @NotNull Builder withCompressionMinSize(@NotNull MemorySize compressionMinSize) {
-            this.compressionMinSize = compressionMinSize;
-            return this;
-        }
-
-        /**
-         * Sets the MIME types eligible for compression.
-         */
-        public @NotNull Builder withCompressionMimeTypes(@NotNull ConcurrentList<String> compressionMimeTypes) {
-            this.compressionMimeTypes = compressionMimeTypes;
-            return this;
-        }
-
-        /**
-         * Sets whether HTTP/2 is enabled.
-         */
-        public @NotNull Builder withHttp2Enabled(boolean http2Enabled) {
-            this.http2Enabled = http2Enabled;
-            return this;
-        }
-
-        /**
-         * Sets the maximum HTTP request header size.
-         */
-        public @NotNull Builder withMaxRequestHeaderSize(@NotNull MemorySize maxRequestHeaderSize) {
-            this.maxRequestHeaderSize = maxRequestHeaderSize;
-            return this;
-        }
-
-        /**
-         * Sets the maximum HTTP form post size.
-         */
-        public @NotNull Builder withMaxFormPostSize(@NotNull MemorySize maxFormPostSize) {
-            this.maxFormPostSize = maxFormPostSize;
-            return this;
-        }
-
-        /**
-         * Sets whether multipart file uploads are enabled.
-         */
-        public @NotNull Builder withMultipartEnabled(boolean multipartEnabled) {
-            this.multipartEnabled = multipartEnabled;
-            return this;
-        }
-
-        /**
-         * Sets the maximum file size for multipart uploads.
-         */
-        public @NotNull Builder withMultipartMaxFileSize(@NotNull MemorySize multipartMaxFileSize) {
-            this.multipartMaxFileSize = multipartMaxFileSize;
-            return this;
-        }
-
-        /**
-         * Sets the maximum total request size for multipart uploads.
-         */
-        public @NotNull Builder withMultipartMaxRequestSize(@NotNull MemorySize multipartMaxRequestSize) {
-            this.multipartMaxRequestSize = multipartMaxRequestSize;
-            return this;
-        }
-
-        /**
-         * Sets the server shutdown mode.
-         */
-        public @NotNull Builder withShutdownMode(@NotNull ShutdownMode shutdownMode) {
-            this.shutdownMode = shutdownMode;
-            return this;
-        }
-
-        /**
-         * Sets the graceful shutdown timeout in seconds.
-         */
-        public @NotNull Builder withShutdownTimeout(int seconds) {
-            this.shutdownTimeout = seconds;
-            return this;
-        }
-
-        /**
-         * Sets the forward headers strategy for reverse proxy support.
-         */
-        public @NotNull Builder withForwardHeadersStrategy(@NotNull ForwardHeadersStrategy forwardHeadersStrategy) {
-            this.forwardHeadersStrategy = forwardHeadersStrategy;
-            return this;
-        }
-
-        /**
-         * Sets the Spring application name.
-         */
-        public @NotNull Builder withApplicationName(@NotNull String applicationName) {
-            this.applicationName = applicationName;
-            return this;
-        }
-
-        /**
-         * Sets the root logging level.
-         */
-        public @NotNull Builder withRootLogLevel(@NotNull LogLevel rootLogLevel) {
-            this.rootLogLevel = rootLogLevel;
-            return this;
-        }
-
-        /**
-         * Sets API key authentication to enable.
-         */
-        public @NotNull Builder isApiKeyAuthEnabled() {
-            return this.isApiKeyAuthEnabled(true);
-        }
-
-        /**
-         * Sets whether API key authentication is enabled.
-         */
-        public @NotNull Builder isApiKeyAuthEnabled(boolean apiKeyAuthEnabled) {
-            this.apiKeyAuthEnabled = apiKeyAuthEnabled;
-            return this;
-        }
-
-        /**
-         * Sets API key authentication to disable.
-         */
-        public @NotNull Builder isApiKeyAuthDisabled() {
-            return this.isApiKeyAuthEnabled(false);
-        }
-
-        /**
-         * Sets SpringDoc OpenAPI documentation to enable.
-         */
-        public @NotNull Builder isSpringdocEnabled() {
-            return this.isSpringdocEnabled(true);
-        }
-
-        /**
-         * Sets whether SpringDoc OpenAPI documentation is enabled.
-         */
-        public @NotNull Builder isSpringdocEnabled(boolean springdocEnabled) {
-            this.springdocEnabled = springdocEnabled;
-            return this;
-        }
-
-        /**
-         * Sets SpringDoc OpenAPI documentation to disable.
-         */
-        public @NotNull Builder isSpringdocDisabled() {
-            return this.isSpringdocEnabled(true);
-        }
-
-        /**
-         * Sets Spring Boot Actuator endpoints to enable.
-         */
-        public @NotNull Builder isActuatorEnabled() {
-            return this.isActuatorEnabled(true);
-        }
-
-        /**
-         * Sets whether Spring Boot Actuator endpoints are enabled.
-         */
-        public @NotNull Builder isActuatorEnabled(boolean actuatorEnabled) {
-            this.actuatorEnabled = actuatorEnabled;
-            return this;
-        }
-
-        /**
-         * Sets Spring Boot Actuator endpoints to disable.
-         */
-        public @NotNull Builder isActuatorDisabled() {
-            return this.isActuatorEnabled(false);
-        }
-
-        /**
-         * Sets the actuator endpoints exposed over HTTP.
-         */
-        public @NotNull Builder withActuatorExposedEndpoints(@NotNull ConcurrentList<String> actuatorExposedEndpoints) {
-            this.actuatorExposedEndpoints = actuatorExposedEndpoints;
-            return this;
-        }
-
-        /**
-         * Sets the base path for actuator endpoints.
-         */
-        public @NotNull Builder withActuatorBasePath(@NotNull String actuatorBasePath) {
-            this.actuatorBasePath = actuatorBasePath;
-            return this;
-        }
-
-        /**
-         * Sets a separate port for management endpoints, or {@code -1} to use the server port.
-         */
-        public @NotNull Builder withManagementPort(int managementPort) {
-            this.managementPort = managementPort;
-            return this;
-        }
-
-        /**
-         * Sets the visibility level for health endpoint details.
-         */
-        public @NotNull Builder withHealthShowDetails(@NotNull HealthDetailsVisibility healthShowDetails) {
-            this.healthShowDetails = healthShowDetails;
-            return this;
-        }
-
-        /**
-         * Validates builder flags and constructs an immutable {@link ServerConfig}.
-         *
-         * @return a fully constructed server configuration
-         */
-        public @NotNull ServerConfig build() {
-            Reflection.validateFlags(this);
-
-            return new ServerConfig(
-                this.port,
-                this.address,
-                this.contextPath,
-                this.maxThreads,
-                this.minSpareThreads,
-                this.virtualThreadsEnabled,
-                this.acceptCount,
-                this.maxConnections,
-                this.connectionTimeout,
-                this.keepAliveTimeout,
-                this.maxKeepAliveRequests,
-                this.compressionEnabled,
-                this.compressionMinSize,
-                this.compressionMimeTypes,
-                this.http2Enabled,
-                this.maxRequestHeaderSize,
-                this.maxFormPostSize,
-                this.multipartEnabled,
-                this.multipartMaxFileSize,
-                this.multipartMaxRequestSize,
-                this.shutdownMode,
-                this.shutdownTimeout,
-                this.forwardHeadersStrategy,
-                this.applicationName,
-                this.rootLogLevel,
-                this.apiKeyAuthEnabled,
-                this.springdocEnabled,
-                this.actuatorEnabled,
-                this.actuatorExposedEndpoints,
-                this.actuatorBasePath,
-                this.managementPort,
-                this.healthShowDetails
-            );
-        }
-
     }
 
     /**

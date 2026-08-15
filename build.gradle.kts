@@ -19,13 +19,10 @@ repositories {
 
 dependencies {
     // Simplified Annotations
+    implementation(libs.simplified.annotations)
     annotationProcessor(libs.simplified.annotations)
-
-    // Lombok Annotations
-    compileOnly(libs.lombok)
-    annotationProcessor(libs.lombok)
-    testCompileOnly(libs.lombok)
-    testAnnotationProcessor(libs.lombok)
+    testCompileOnly(libs.simplified.annotations)
+    testAnnotationProcessor(libs.simplified.annotations)
 
     // SpringDoc OpenAPI (compile-only for optional documentation enrichment)
     compileOnly(libs.springdoc.openapi.common)
@@ -40,9 +37,11 @@ dependencies {
     testRuntimeOnly(libs.spring.boot.properties.migrator)
 
     // Exported dependencies (available to consumers)
-    api("com.github.simplified-dev:gson-extras") { version { strictly("2ba8143") } }
-    api("com.github.simplified-dev:client") { version { strictly("3d87a03") } }
+    api("com.github.simplified-dev:gson-extras") { version { strictly("c4bde8d") } }
+    api("com.github.simplified-dev:client") { version { strictly("2a3f2fc") } }
     api(libs.gson)
+    // @Log emits a log4j2 field, so the API has to be on this module's own classpath
+    api(libs.log4j2.api)
     api(libs.spring.boot.actuator)
     api(libs.spring.boot.web)
     api(libs.spring.boot.security)

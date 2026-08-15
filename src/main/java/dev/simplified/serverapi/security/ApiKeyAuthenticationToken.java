@@ -1,5 +1,6 @@
 package dev.simplified.serverapi.security;
 
+import dev.simplified.annotations.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -26,6 +27,11 @@ import java.util.Collections;
 public final class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
 
     private final @NotNull String keyValue;
+
+    /**
+     * The resolved key, or {@code null} while this token is unauthenticated.
+     */
+    @Getter
     private final @Nullable ApiKey apiKey;
 
     private ApiKeyAuthenticationToken(@NotNull String keyValue, @Nullable ApiKey apiKey, @NotNull Collection<? extends GrantedAuthority> authorities) {
@@ -74,15 +80,6 @@ public final class ApiKeyAuthenticationToken extends AbstractAuthenticationToken
     @Override
     public @NotNull Object getPrincipal() {
         return this.apiKey != null ? this.apiKey : this.keyValue;
-    }
-
-    /**
-     * Returns the resolved key, or {@code null} if this token is unauthenticated.
-     *
-     * @return the authenticated {@link ApiKey}, or {@code null}
-     */
-    public @Nullable ApiKey getApiKey() {
-        return this.apiKey;
     }
 
     @Override

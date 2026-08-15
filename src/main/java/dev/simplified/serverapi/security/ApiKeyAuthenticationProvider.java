@@ -1,6 +1,6 @@
 package dev.simplified.serverapi.security;
 
-import lombok.RequiredArgsConstructor;
+import dev.simplified.annotations.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

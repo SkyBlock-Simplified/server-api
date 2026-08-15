@@ -14,7 +14,6 @@ import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.method.HandlerMethod;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -107,11 +106,7 @@ public class ApiKeyOperationCustomizer implements OperationCustomizer {
             while (literalMatcher.find()) {
                 String literal = literalMatcher.group(1);
                 String roleName = literal.startsWith("ROLE_") ? literal.substring("ROLE_".length()) : literal;
-
-                try {
-                    roles.add(ApiKeyRole.valueOf(roleName));
-                } catch (IllegalArgumentException ignored) {
-                }
+                ApiKeyRole.findByName(roleName).ifPresent(roles::add);
             }
         }
 
@@ -126,7 +121,7 @@ public class ApiKeyOperationCustomizer implements OperationCustomizer {
     private static @NotNull String resolveQualifyingRoles(@NotNull Set<ApiKeyRole> required) {
         int minOrdinal = required.stream().mapToInt(Enum::ordinal).min().orElse(Integer.MAX_VALUE);
 
-        return Arrays.stream(ApiKeyRole.values())
+        return ApiKeyRole.stream()
             .filter(role -> role.ordinal() <= minOrdinal)
             .map(ApiKeyRole::name)
             .collect(Collectors.joining(", "));
