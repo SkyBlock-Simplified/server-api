@@ -81,10 +81,13 @@ public final class ServerConfig {
     @BuildFlag(nonNull = true)
     private final @NotNull LogLevel rootLogLevel = LogLevel.INFO;
     @Negate("apiKeyAuthDisabled")
+    @SetterNames(set = "is{}")
     private final boolean apiKeyAuthEnabled = true;
     @Negate("springdocDisabled")
+    @SetterNames(set = "is{}")
     private final boolean springdocEnabled = true;
     @Negate("actuatorDisabled")
+    @SetterNames(set = "is{}")
     private final boolean actuatorEnabled = false;
     @BuildFlag(nonNull = true)
     private final @NotNull ConcurrentList<String> actuatorExposedEndpoints = Concurrent.newList("health", "info");
@@ -106,7 +109,7 @@ public final class ServerConfig {
             .withMinSpareThreads(50)
             .withVirtualThreadsEnabled(true)
             .withAcceptCount(200)
-            .withActuatorEnabled(true)
+            .isActuatorEnabled(true)
             .withMaxConnections(10000)
             .withConnectionTimeout(10)
             .withCompressionEnabled(true)
