@@ -1,11 +1,10 @@
 package dev.simplified.serverapi.error;
 
+import dev.simplified.annotations.Getter;
+import dev.simplified.annotations.RequiredArgsConstructor;
+import dev.simplified.annotations.UtilityClass;
 import dev.simplified.util.StringUtil;
 import dev.simplified.util.SystemUtil;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.web.util.HtmlUtils;
@@ -27,7 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @see <a href="https://github.com/donlon/cloudflare-error-page">Cloudflare Error Page Generator</a>
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public final class ErrorPageRenderer {
 
     private static final @NotNull String CSS = loadResource("error/error-page.css");

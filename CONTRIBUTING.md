@@ -27,7 +27,7 @@ project follows.
 |-------------|---------|-------|
 | [JDK](https://adoptium.net/) | **21+** | Required |
 | [Git](https://git-scm.com/) | 2.x+ | For cloning and contributing |
-| [IntelliJ IDEA](https://www.jetbrains.com/idea/) | Latest | Recommended IDE (Lombok and Gradle support built-in) |
+| [IntelliJ IDEA](https://www.jetbrains.com/idea/) | Latest | Recommended IDE (Gradle support built-in, plus the Simplified Annotations plugin) |
 
 ### Development Setup
 
@@ -53,8 +53,8 @@ project follows.
 4. **Open in IntelliJ IDEA**
 
    Open the project root as a Gradle project. IntelliJ will automatically
-   detect the `build.gradle.kts` and import dependencies. Ensure the Lombok
-   plugin is installed and annotation processing is enabled
+   detect the `build.gradle.kts` and import dependencies. Ensure the Simplified
+   Annotations plugin is installed and annotation processing is enabled
    (`Settings > Build > Compiler > Annotation Processors`).
 
 5. **Verify the setup**
@@ -86,11 +86,11 @@ git checkout -b feat/my-feature master
   `Concurrent.newSet()` instead of `new ArrayList`, `new HashMap`, etc.
 - **Annotations** - Use `@NotNull` / `@Nullable` from `org.jetbrains.annotations`
   on all public method parameters and return types.
-- **Lombok** - Use `@Getter`, `@RequiredArgsConstructor`, `@Log4j2`, etc.
-  where appropriate. The logger field is non-static
-  (`lombok.log.fieldIsStatic = false`).
-- **Builder pattern** - Use `ClassBuilder<T>` with `@BuildFlag` validation.
-  Follow the existing pattern in `ServerConfig.Builder`.
+- **Simplified Annotations** - Use `@Getter`, `@RequiredArgsConstructor`, `@Log`,
+  etc. where appropriate. `@Log` emits one `private static final` log4j2 logger
+  named `log`.
+- **Builder pattern** - Use `@ClassBuilder` with `@BuildFlag` validation.
+  Follow the existing pattern on `ServerConfig`.
 
 #### Braces
 

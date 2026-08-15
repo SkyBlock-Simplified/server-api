@@ -1,9 +1,9 @@
 package dev.simplified.serverapi.error;
 
 import com.google.gson.Gson;
+import dev.simplified.annotations.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;

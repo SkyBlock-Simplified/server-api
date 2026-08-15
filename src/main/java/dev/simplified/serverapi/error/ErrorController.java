@@ -1,12 +1,12 @@
 package dev.simplified.serverapi.error;
 
+import dev.simplified.annotations.Log;
+import dev.simplified.annotations.RequiredArgsConstructor;
 import dev.simplified.client.exception.ApiDecodeException;
 import dev.simplified.client.exception.ApiException;
 import dev.simplified.serverapi.security.ApiKeyAccessDeniedHandler;
 import dev.simplified.serverapi.security.ApiKeyAuthenticationEntryPoint;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,7 +45,7 @@ import org.springframework.web.util.HtmlUtils;
  * and {@link AuthenticationException} handlers below mirror the filter's behavior for
  * that path.</p>
  */
-@Log4j2
+@Log
 @RequiredArgsConstructor
 @RestControllerAdvice
 public final class ErrorController extends ResponseEntityExceptionHandler {

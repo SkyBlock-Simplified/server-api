@@ -1,9 +1,9 @@
 package dev.simplified.serverapi.security;
 
+import dev.simplified.annotations.RequiredArgsConstructor;
 import dev.simplified.serverapi.error.ErrorResponseWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;

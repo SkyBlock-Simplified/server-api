@@ -329,8 +329,8 @@ server-api/
 | simplified-dev gson-extras | master-SNAPSHOT | `GsonSettings` and custom Gson type adapters |
 | simplified-dev client | master-SNAPSHOT | `ApiException`/`ApiDecodeException` types used by `ErrorController` |
 | Gson | 2.11.0 | JSON serialization |
-| Lombok | 1.18.36 | Boilerplate reduction |
-| simplified-annotations | 1.0.4 | Custom annotation processing |
+| Simplified Annotations | 2.5.1 | Accessors, constructors, `@ClassBuilder`, `@Log` |
+| Log4j2 API | 2.25.3 | Logger type the generated `@Log` field holds |
 | JUnit 5 | 5.11.4 | Testing |
 | Hamcrest | 2.2 | Test matchers |
 | Spring Boot Starter Test | 3.4.5 | Integration testing with `@SpringBootTest` |

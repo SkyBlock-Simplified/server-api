@@ -1,12 +1,12 @@
 package dev.simplified.serverapi.security;
 
+import dev.simplified.annotations.RequiredArgsConstructor;
 import dev.simplified.serverapi.error.ErrorResponseWriter;
 import io.github.bucket4j.Bucket;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;

@@ -1,5 +1,6 @@
 package dev.simplified.serverapi.security;
 
+import dev.simplified.annotations.EnumLookup;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 
@@ -12,6 +13,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
  * {@link ApiKeySecurityConfig}, derived from this enum's declaration order so adding a
  * constant requires no other changes.</p>
  */
+@EnumLookup
 public enum ApiKeyRole {
 
     DEVELOPER,
