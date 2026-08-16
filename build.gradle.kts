@@ -37,8 +37,8 @@ dependencies {
     testRuntimeOnly(libs.spring.boot.properties.migrator)
 
     // Exported dependencies (available to consumers)
-    api("com.github.simplified-dev:gson-extras") { version { strictly("c4bde8d") } }
-    api("com.github.simplified-dev:client") { version { strictly("2a3f2fc") } }
+    api("com.github.simplified-dev:gson-extras") { version { strictly("f143dc1") } }
+    api("com.github.simplified-dev:client") { version { strictly("1ca9934") } }
     api(libs.gson)
     // @Log emits a log4j2 field, so the API has to be on this module's own classpath
     api(libs.log4j2.api)
