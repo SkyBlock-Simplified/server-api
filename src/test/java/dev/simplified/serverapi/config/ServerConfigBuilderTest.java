@@ -79,8 +79,61 @@ class ServerConfigBuilderTest {
         @Test
         @DisplayName("the typed negated setter takes the negated sense of its argument")
         void typedNegatedSetter_readsAsItsOwnName() {
-            assertThat(ServerConfig.builder().withSpringdocDisabled(true).build().isSpringdocEnabled(), is(false));
-            assertThat(ServerConfig.builder().withSpringdocDisabled(false).build().isSpringdocEnabled(), is(true));
+            assertThat(ServerConfig.builder().isSpringdocDisabled(true).build().isSpringdocEnabled(), is(false));
+            assertThat(ServerConfig.builder().isSpringdocDisabled(false).build().isSpringdocEnabled(), is(true));
+        }
+    }
+
+    /**
+     * Pins the arity that only a per-field {@code set} override produces. Every other field on this
+     * type spells its value-taking setter {@code with<Name>}, so these three are the one place the
+     * name and the arity have to be asserted together - {@code isActuatorEnabled} resolves either
+     * way, and it is the {@code boolean}-taking form that a caller loses without the override.
+     */
+    @Nested
+    @DisplayName("per-field setter names")
+    class PerFieldSetterNames {
+
+        @Test
+        @DisplayName("each flag takes a boolean through its is-prefixed setter")
+        void flagSetter_takesABoolean() {
+            ServerConfig on = ServerConfig.builder()
+                .isActuatorEnabled(true)
+                .isApiKeyAuthEnabled(true)
+                .isSpringdocEnabled(true)
+                .build();
+
+            assertThat(on.isActuatorEnabled(), is(true));
+            assertThat(on.isApiKeyAuthEnabled(), is(true));
+            assertThat(on.isSpringdocEnabled(), is(true));
+        }
+
+        @Test
+        @DisplayName("the same setter carries false, so it is an assignment rather than an enable")
+        void flagSetter_carriesFalse() {
+            ServerConfig off = ServerConfig.builder()
+                .isActuatorEnabled(false)
+                .isApiKeyAuthEnabled(false)
+                .isSpringdocEnabled(false)
+                .build();
+
+            assertThat(off.isActuatorEnabled(), is(false));
+            assertThat(off.isApiKeyAuthEnabled(), is(false));
+            assertThat(off.isSpringdocEnabled(), is(false));
+        }
+
+        @Test
+        @DisplayName("the override reaches only the three fields that declare it")
+        void override_isPerFieldRatherThanPerType() {
+            ServerConfig config = ServerConfig.builder()
+                .withPort(9090)
+                .withCompressionEnabled(true)
+                .withVirtualThreadsEnabled(true)
+                .build();
+
+            assertThat(config.getPort(), is(9090));
+            assertThat(config.isCompressionEnabled(), is(true));
+            assertThat(config.isVirtualThreadsEnabled(), is(true));
         }
     }
 
